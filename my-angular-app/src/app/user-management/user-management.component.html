@@ -1,0 +1,152 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div
+          class="card-header text-center d-flex justify-content-between align-items-center"
+        >
+          <h2 class="mb-0">User Management</h2>
+          <!-- Add Logout Button Here -->
+          <app-logout></app-logout>
+        </div>
+        <div class="card-body">
+          <!-- Add User Form with Validation -->
+          <form #userForm="ngForm" (ngSubmit)="addUser()" novalidate>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="username">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  [(ngModel)]="username"
+                  name="username"
+                  class="form-control"
+                  required
+                  minlength="3"
+                  #usernameInput="ngModel"
+                />
+                <!-- Validation Errors -->
+                <div
+                  *ngIf="usernameInput.invalid && usernameInput.touched"
+                  class="text-danger"
+                >
+                  <small *ngIf="usernameInput.errors?.['required']"
+                    >Username is required.</small
+                  >
+                  <small *ngIf="usernameInput.errors?.['minlength']"
+                    >Username must be at least 3 characters long.</small
+                  >
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label for="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  [(ngModel)]="email"
+                  name="email"
+                  class="form-control"
+                  required
+                  email
+                  #emailInput="ngModel"
+                />
+                <!-- Validation Errors -->
+                <div
+                  *ngIf="emailInput.invalid && emailInput.touched"
+                  class="text-danger"
+                >
+                  <small *ngIf="emailInput.errors?.['required']"
+                    >Email is required.</small
+                  >
+                  <small *ngIf="emailInput.errors?.['email']"
+                    >Invalid email format.</small
+                  >
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label for="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  [(ngModel)]="password"
+                  name="password"
+                  class="form-control"
+                  required
+                  minlength="6"
+                  #passwordInput="ngModel"
+                />
+                <!-- Validation Errors -->
+                <div
+                  *ngIf="passwordInput.invalid && passwordInput.touched"
+                  class="text-danger"
+                >
+                  <small *ngIf="passwordInput.errors?.['required']"
+                    >Password is required.</small
+                  >
+                  <small *ngIf="passwordInput.errors?.['minlength']"
+                    >Password must be at least 6 characters long.</small
+                  >
+                </div>
+              </div>
+
+              <div class="col-md-2 d-flex align-items-end">
+                <button
+                  type="submit"
+                  class="btn btn-success w-100"
+                  [disabled]="userForm.invalid"
+                >
+                  Add User
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Error Message if User Already Exists -->
+          <p *ngIf="userExists" class="text-danger text-center mt-3">
+            User already exists!
+          </p>
+
+          <!-- Users List -->
+          <div class="mt-4">
+            <h5>Existing Users</h5>
+            <ul class="list-group">
+              <li
+                *ngFor="let user of users"
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <div>
+                  {{ user.username }} ({{ user.email }}) - Role:
+                  <strong>{{ user.role }}</strong>
+                </div>
+                <div>
+                  <button
+                    *ngIf="user.role !== 'groupadmin'"
+                    class="btn btn-sm btn-primary m-2"
+                    (click)="promoteUser(user.username)"
+                  >
+                    Promote to Group Admin
+                  </button>
+                  <button
+                    *ngIf="user.role === 'groupadmin'"
+                    class="btn btn-sm btn-warning m-2"
+                    (click)="demoteUser(user.username)"
+                  >
+                    Demote to User
+                  </button>
+                  <button
+                    class="btn btn-sm btn-danger"
+                    (click)="removeUser(user.username)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

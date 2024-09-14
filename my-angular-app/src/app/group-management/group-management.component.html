@@ -1,0 +1,120 @@
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Group Management</h2>
+    <!-- Logout Button -->
+    <app-logout></app-logout>
+  </div>
+
+  <!-- Create Group Section -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Create a New Group</h5>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="createGroup()">
+        <div class="form-row">
+          <div class="col">
+            <input
+              [(ngModel)]="groupName"
+              placeholder="Enter Group Name"
+              name="groupName"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Create Group</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Display Groups Section -->
+  <div *ngFor="let group of groups" class="card mb-3 shadow-sm">
+    <div
+      class="card-header bg-secondary text-white d-flex justify-content-between align-items-center"
+    >
+      <h5 class="mb-0">{{ group.groupName }}</h5>
+      <button
+        class="btn btn-danger btn-sm"
+        (click)="deleteGroup(group.groupName)"
+      >
+        Delete Group
+      </button>
+    </div>
+    <div class="card-body">
+      <!-- Users Section -->
+      <div class="mb-4">
+        <h6>Users in Group</h6>
+        <ul class="list-group">
+          <li
+            *ngFor="let user of group.users"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            {{ user }}
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="removeUserFromGroup(group.groupName, user)"
+            >
+              Remove User
+            </button>
+          </li>
+        </ul>
+        <div class="input-group mt-3">
+          <input
+            [(ngModel)]="username"
+            placeholder="Add User to Group"
+            name="username"
+            class="form-control"
+            required
+          />
+          <div class="input-group-append">
+            <button
+              class="btn btn-success"
+              (click)="addUserToGroup(group.groupName, username)"
+            >
+              Add User
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Channels Section -->
+      <div>
+        <h6>Channels in Group</h6>
+        <ul class="list-group">
+          <li
+            *ngFor="let channel of group.channels"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            {{ channel }}
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="removeChannelFromGroup(group.groupName, channel)"
+            >
+              Remove Channel
+            </button>
+          </li>
+        </ul>
+        <div class="input-group mt-3">
+          <input
+            [(ngModel)]="channelName"
+            placeholder="Add Channel to Group"
+            name="channelName"
+            class="form-control"
+            required
+          />
+          <div class="input-group-append">
+            <button
+              class="btn btn-success"
+              (click)="addChannelToGroup(group.groupName, channelName)"
+            >
+              Add Channel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

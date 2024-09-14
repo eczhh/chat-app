@@ -1,0 +1,52 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header text-center">
+          <h2>Login</h2>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="login()">
+            <!-- Username Field -->
+            <div class="form-group mb-3">
+              <label for="username">Username:</label>
+              <input
+                type="text"
+                id="username"
+                [(ngModel)]="username"
+                name="username"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group mb-3">
+              <label for="password">Password:</label>
+              <input
+                type="password"
+                id="password"
+                [(ngModel)]="password"
+                name="password"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-block">
+                Login
+              </button>
+            </div>
+          </form>
+
+          <!-- Error Message -->
+          <p *ngIf="loginFailed" class="text-danger mt-3 text-center">
+            Login failed. Please check your username and password.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
