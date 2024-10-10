@@ -1,1 +1,13 @@
-[{"groupName":"Developers","users":["john_doe","admin"],"channels":["general","backend","frontend"]},{"groupName":"Marketing","users":["groupadmin","john_doe"],"channels":["social-media"]},{"groupName":"test group","users":[],"channels":[]}]
+[
+  {
+    "groupName": "Developers",
+    "users": ["john_doe", "admin"],
+    "channels": ["general", "backend", "frontend"]
+  },
+  {
+    "groupName": "Marketing",
+    "users": ["groupadmin", "john_doe"],
+    "channels": ["social-media"]
+  },
+  { "groupName": "test group", "users": [], "channels": [] }
+]

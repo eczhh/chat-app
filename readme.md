@@ -175,3 +175,4 @@ The Angular frontend communicates with the Node.js backend using a REST API. Bel
 - **Group admin** will be redirected to the **Group Management** page.
 - **Regular users** will be redirected to the **Dashboard**.# chat-app
 # chat-app
+# chat-app

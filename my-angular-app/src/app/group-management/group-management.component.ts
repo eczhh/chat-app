@@ -52,6 +52,12 @@ export class GroupManagementComponent {
     });
   }
 
+  deleteGroup(groupName: string): void {
+    this.http.delete(`${this.apiUrl}/${groupName}`).subscribe(() => {
+      this.loadGroups();
+    });
+  }
+
   loadGroups(): void {
     this.http.get(this.apiUrl).subscribe((groups: any) => {
       this.groups = groups;
