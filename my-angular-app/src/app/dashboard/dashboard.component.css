@@ -1,175 +1,338 @@
-body {
-  background-color: #3498db;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-.container {
-  margin: 60px auto;
-  background: #fff;
+/* ================================
+   1. Reset and Base Styles
+================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
   padding: 0;
-  border-radius: 7px;
 }
 
-.profile-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 40px;
+html,
+body {
+  height: 100%; /* Ensure the html and body take up full height */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  color: #333333;
+  overflow: hidden; /* Prevent body scroll */
+}
+
+.container-fluid {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full viewport height */
+}
+
+/* ================================
+   2. Sidebar Styles
+================================ */
+.row {
+  display: flex;
+  flex: 1; /* Allow row to grow and fill the container */
+}
+
+.col-md-4 {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow column to shrink */
 }
 
 .settings-tray {
-  background: #eee;
-  padding: 10px 15px;
-  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  height: 70px; /* Fixed height for header */
+  flex-shrink: 0; /* Prevent shrinking */
 }
-.settings-tray .no-gutters {
-  padding: 0;
+
+.settings-tray .profile-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
 }
+
 .settings-tray--right {
-  float: right;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
 }
-.settings-tray--right i {
-  margin-top: 10px;
-  font-size: 25px;
-  color: grey;
-  margin-left: 14px;
-  transition: 0.3s;
-}
-.settings-tray--right i:hover {
-  color: #74b9ff;
+
+.settings-tray--right .material-icons {
+  margin-left: 15px;
   cursor: pointer;
+  color: #555555;
+  transition: color 0.3s;
+}
+
+.settings-tray--right .material-icons:hover {
+  color: #000000;
 }
 
 .search-box {
-  background: #fafafa;
-  padding: 10px 13px;
-}
-.search-box .input-wrapper {
-  background: #fff;
-  border-radius: 40px;
-}
-.search-box .input-wrapper i {
-  color: grey;
-  margin-left: 7px;
-  vertical-align: middle;
-}
-
-input {
-  border: none;
-  border-radius: 30px;
-  width: 80%;
-}
-input::placeholder {
-  color: #e3e3e3;
-  font-weight: 300;
-  margin-left: 20px;
-}
-input:focus {
-  outline: none;
-}
-
-.friend-drawer {
   padding: 10px 15px;
-  display: flex;
-  vertical-align: baseline;
-  background: #fff;
-  transition: 0.3s ease;
-}
-.friend-drawer--grey {
-  background: #eee;
-}
-.friend-drawer .text {
-  margin-left: 12px;
-  width: 70%;
-}
-.friend-drawer .text h6 {
-  margin-top: 6px;
-  margin-bottom: 0;
-}
-.friend-drawer .text p {
-  margin: 0;
-}
-.friend-drawer .time {
-  color: grey;
-}
-.friend-drawer--onhover:hover {
-  background: #74b9ff;
-  cursor: pointer;
-}
-.friend-drawer--onhover:hover p,
-.friend-drawer--onhover:hover h6,
-.friend-drawer--onhover:hover .time {
-  color: #fff !important;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  height: 60px; /* Fixed height for search box */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
-hr {
-  margin: 5px auto;
-  width: 60%;
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-wrapper i {
+  color: #999999;
+}
+
+.input-wrapper input {
+  border: none;
+  outline: none;
+  flex: 1;
+  margin-left: 10px;
+  font-size: 1em;
+}
+
+.online-users {
+  padding: 10px 0;
+  flex: 1 1 auto; /* Allow to grow and shrink */
+  overflow-y: auto; /* Enable scrolling */
+  min-height: 0; /* Allow shrinking */
+}
+
+/* Friend Drawer Styles */
+.friend-drawer {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.friend-drawer:hover {
+  background-color: #f9f9f9;
+}
+
+.friend-drawer--grey {
+  background-color: #f5f5f5;
+}
+
+.friend-drawer .profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.friend-drawer .text {
+  flex: 1;
+}
+
+.friend-drawer .text h6 {
+  margin: 0;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.friend-drawer .text p {
+  margin: 5px 0 0 0;
+  color: #999999;
+  font-size: 0.9em;
+}
+
+.friend-drawer .time {
+  font-size: 0.8em;
+  color: #999999;
+}
+
+.hr {
+  margin: 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* ================================
+   3. Chat Panel Styles
+================================ */
+.col-md-8 {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow column to shrink */
+  padding-bottom: 70px; /* Space for the fixed input tray */
+}
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto; /* Allow to grow and shrink */
+  background-color: #ffffff;
+  min-height: 0; /* Allow shrinking */
+}
+
+.chat-messages {
+  flex: 1 1 auto; /* Expand to fill available space */
+  overflow-y: auto; /* Enable scrolling */
+  padding: 10px 15px;
+  background-color: #fafafa;
+  min-height: 0; /* Allow shrinking */
+  padding-bottom: 70px; /* Space for the fixed input tray */
 }
 
 .chat-bubble {
-  padding: 10px 14px;
-  background: #eee;
-  margin: 10px 30px;
-  border-radius: 9px;
-  position: relative;
-  animation: fadeIn 1s ease-in;
-}
-.chat-bubble:after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 0;
-  height: 0;
-  border: 20px solid transparent;
-  border-bottom: 0;
-  margin-top: -10px;
-}
-.chat-bubble--left:after {
-  left: 0;
-  border-right-color: #eee;
-  border-left: 0;
-  margin-left: -20px;
-}
-.chat-bubble--right:after {
-  right: 0;
-  border-left-color: #74b9ff;
-  border-right: 0;
-  margin-right: -20px;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-.offset-md-9 .chat-bubble {
-  background: #74b9ff;
-  color: #fff;
-}
-
-.chat-box-tray {
-  background: #eee;
-  display: flex;
-  align-items: baseline;
   padding: 10px 15px;
-  align-items: center;
-  margin-top: 19px;
+  border-radius: 20px;
+  max-width: 60%;
+  word-wrap: break-word;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.chat-bubble--left {
+  background-color: #f1f0f0;
+  text-align: left;
+  align-self: flex-start;
+}
+
+.chat-bubble--right {
+  background-color: #0084ff;
+  color: #ffffff;
+  text-align: right;
+  align-self: flex-end;
+}
+
+.chat-bubble .time {
+  display: block;
+  font-size: 0.7em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 5px;
+}
+
+/* ================================
+   4. Fixed Chat Input Tray
+================================ */
+.chat-box-tray {
+  position: fixed;
   bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+  height: 70px; /* Fixed height for input tray */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure it stays on top */
 }
-.chat-box-tray input {
-  margin: 0 10px;
-  padding: 6px 2px;
-}
+
 .chat-box-tray i {
-  color: grey;
-  font-size: 30px;
-  vertical-align: middle;
+  cursor: pointer;
+  color: #999999;
+  margin-right: 10px;
+  transition: color 0.3s;
 }
-.chat-box-tray i:last-of-type {
-  margin-left: 25px;
+
+.chat-box-tray i:hover {
+  color: #555555;
+}
+
+.chat-box-tray input {
+  flex: 1;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 20px;
+  outline: none;
+  background-color: #ffffff;
+  font-size: 1em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chat-box-tray input::placeholder {
+  color: #999999;
+}
+
+/* ================================
+   5. Responsive Design
+================================ */
+@media (max-width: 767.98px) {
+  .col-md-4 {
+    display: none; /* Hide sidebar on small screens */
+  }
+  .row {
+    flex-direction: column; /* Stack columns vertically */
+  }
+}
+
+@media (max-width: 575.98px) {
+  .settings-tray {
+    height: 60px;
+    padding: 0 10px;
+  }
+
+  .settings-tray .profile-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .search-box {
+    padding: 8px 10px;
+    height: 60px; /* Adjust if necessary */
+  }
+
+  .friend-drawer {
+    padding: 8px 10px;
+  }
+
+  .chat-box-tray {
+    padding: 8px 10px;
+    height: 60px; /* Adjust for smaller screens */
+  }
+
+  .chat-box-tray i {
+    margin-right: 8px;
+  }
+}
+
+/* ================================
+   6. Custom Scrollbar (Optional)
+================================ */
+.chat-messages::-webkit-scrollbar,
+.online-users::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track,
+.online-users::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+.online-users::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover,
+.online-users::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Optional: Ensure media elements fit within chat bubbles */
+.chat-bubble img,
+.chat-bubble video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
 }

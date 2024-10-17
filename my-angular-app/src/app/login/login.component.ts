@@ -4,6 +4,7 @@ import { AuthService } from "../auth.service";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { HttpClientModule } from "@angular/common/http";
+import { SocketService } from "../services/socket.service";
 
 @Component({
   selector: "app-login",
@@ -11,18 +12,28 @@ import { HttpClientModule } from "@angular/common/http";
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.css"],
   imports: [FormsModule, CommonModule, HttpClientModule],
+  providers: [SocketService],
 })
 export class LoginComponent {
   username: string = "";
   password: string = "";
   loginFailed: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private socketService: SocketService
+  ) {}
 
   login(): void {
     this.authService.login(this.username, this.password).subscribe(
       (success) => {
         if (success) {
+
+          const token = success.token;
+          this.socketService.setToken(token);
+          console.log("Socket token set and connected");
+
           const role = this.authService.getRole(); // Get role from localStorage
 
           if (role === "superadmin") {

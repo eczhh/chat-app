@@ -1,0 +1,12 @@
+<div>
+  <h3>Your Peer ID: {{ myPeerId }}</h3>
+
+  <!-- Video elements for local and remote streams -->
+  <video #localVideo autoplay playsinline muted></video>
+  <video #remoteVideo autoplay playsinline></video>
+
+  <!-- Input for the other peer's ID -->
+  <input type="text" placeholder="Enter peer ID" #peerIdInput />
+  <button (click)="makeCall(peerIdInput.value)">Call</button>
+  <button (click)="endCall()">End Call</button>
+</div>

@@ -11,20 +11,21 @@ export class AuthService {
 
   constructor(private http: HttpClient) {} // Inject HttpClient
 
-  login(username: string, password: string): Observable<boolean> {
+  login(username: string, password: string): Observable<any> {
     return this.http
-      .post<{ message: string; user: any }>(`${this.apiUrl}/login`, {
+      .post<{ message: string; token: string; user: any }>(`${this.apiUrl}/login`, {
         username,
         password,
       })
       .pipe(
         map((response) => {
-          if (response && response.user) {
+          if (response && response.user && response.token) {
+            localStorage.setItem("token", response.token); // Store the token
             localStorage.setItem("loggedInUser", response.user.username);
-            localStorage.setItem("userRole", response.user.role); // Store user role
-            return true;
+            localStorage.setItem("userRole", response.user.role);
+            return response; // Return the full response with token
           } else {
-            return false;
+            return null;
           }
         })
       );
@@ -33,6 +34,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem("loggedInUser");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("token");
   }
 
   isLoggedIn(): boolean {

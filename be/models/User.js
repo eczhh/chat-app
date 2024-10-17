@@ -1,6 +1,6 @@
 // models/User.js
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 // Define the User Schema
 const UserSchema = new mongoose.Schema({
@@ -37,32 +37,32 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Pre-save Hook to Hash Passwords
-UserSchema.pre('save', async function (next) {
-  try {
-    // Only hash the password if it has been modified (or is new)
-    if (!this.isModified('password')) {
-      return next();
-    }
+// UserSchema.pre('save', async function (next) {
+//   try {
+//     // Only hash the password if it has been modified (or is new)
+//     if (!this.isModified('password')) {
+//       return next();
+//     }
 
-    // Generate a salt
-    const salt = await bcrypt.genSalt(10);
+//     // Generate a salt
+//     const salt = await bcrypt.genSalt(10);
 
-    // Hash the password using the salt
-    const hashedPassword = await bcrypt.hash(this.password, salt);
+//     // Hash the password using the salt
+//     const hashedPassword = await bcrypt.hash(this.password, salt);
 
-    // Replace the plaintext password with the hashed one
-    this.password = hashedPassword;
+//     // Replace the plaintext password with the hashed one
+//     this.password = hashedPassword;
 
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 // Method to Compare Passwords
-UserSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
-};
+// UserSchema.methods.comparePassword = async function (candidatePassword) {
+//   return await bcrypt.compare(candidatePassword, this.password);
+// };
 
 // Export the User Model
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('usrs', UserSchema);
