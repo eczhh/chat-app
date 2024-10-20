@@ -206,7 +206,7 @@ app.post('/api/users', async (req, res) => {
       return res.status(400).send('User already exists');
     }
 
-    user = new User({ username, email, password, role: 'User' });
+    user = new User({ username, email, password, role: 'User' });   
     await user.save();
     console.log('New user added successfully:', username);
     res.status(201).json(user);
