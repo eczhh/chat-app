@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a Chat System built using **Angular** on the frontend and **Node.js** on the backend. The system implements role-based authentication, allowing different users (e.g., admin, group admins) to access different parts of the system.
+This project is a Chat System built using **Angular** on the frontend and **Node.js** with **MongoDB** on the backend. The system implements role-based authentication, allowing different users (e.g., superadmins, group admins) to access various features based on their roles.
 
 ## Git Structure
 
@@ -10,16 +10,20 @@ The repository follows a structured approach to version control:
 
 ```
 ├── backend/                # Node.js backend folder
-│   ├── data/               # JSON files for users and groups
-│   ├── index.js            # Main Node.js server file
+│   ├── models/             # Mongoose models (User, Group, Message)
+│   ├── routes/             # Express API routes for authentication, user, and group management
+│   ├── uploads/            # Directory for uploaded images or files
+│   ├── .env                # Environment configuration file
+│   ├── db.js               # Database connection setup for MongoDB
+│   ├── index.js            # Main server setup file
 │   └── package.json        # Backend dependencies
 ├── frontend/               # Angular frontend folder
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── components/ # Angular components (e.g., login, dashboard)
-│   │   │   ├── services/   # Angular services (e.g., AuthService)
-│   │   │   ├── guards/     # AuthGuard implementation
-│   └── assets/             # Static files (e.g., CSS)
+│   │   │   ├── services/   # Angular services (e.g., AuthService, SocketService)
+│   │   │   ├── guards/     # Angular route guards (e.g., AuthGuard)
+│   └── angular.json        # Angular configuration
 ├── README.md               # Project documentation
 └── .gitignore              # Ignored files for Git
 ```
@@ -31,57 +35,37 @@ The repository follows a structured approach to version control:
 
 ## Data Structure
 
-The main data structure used in the project is **JSON** for storing user and group data.
+The application uses **MongoDB** as its database, with collections for users, groups, and messages.
 
-### Users Data (in `users.json`):
+### MongoDB Collections
 
-```json
-[
-  {
-    "username": "super",
-    "password": "123",
-    "role": "superadmin"
-  },
-  {
-    "username": "groupadmin",
-    "password": "password",
-    "role": "groupadmin"
-  },
-  {
-    "username": "john_doe",
-    "password": "john123",
-    "role": "user"
-  }
-]
-```
+1. **Users Collection**:
+   - Stores user credentials and roles.
+   - Fields:
+     - `username` (String): Unique identifier for login.
+     - `password` (String): Hashed password.
+     - `role` (String): Role that determines access privileges (e.g., `superadmin`, `groupadmin`, `user`).
 
-- Each user has:
-  - `username`: Unique identifier for login.
-  - `password`: Plain-text password for login.
-  - `role`: Role that determines access privileges (e.g., `superadmin`, `groupadmin`, `user`).
+2. **Groups Collection**:
+   - Stores information about groups and associated users.
+   - Fields:
+     - `groupName` (String): Name of the group.
+     - `users` (Array of ObjectIds): References to user documents.
+     - `channels` (Array of Strings): List of channels associated with the group.
 
-### Groups Data (in `groups.json`):
-
-```json
-[
-  {
-    "groupName": "Admins",
-    "users": ["super", "groupadmin"],
-    "channels": ["General", "Admin Discussions"]
-  }
-]
-```
-
-- `groupName`: Name of the group.
-- `users`: Array of usernames belonging to the group.
-- `channels`: Array of channels available to the group.
+3. **Messages Collection**:
+   - Stores chat messages.
+   - Fields:
+     - `sender` (ObjectId): Reference to the sender's user document.
+     - `content` (String): Message content.
+     - `timestamp` (Date): Time when the message was sent.
+     - `group` (ObjectId): Reference to the group where the message was sent.
 
 ## REST API
 
 The Angular frontend communicates with the Node.js backend using a REST API. Below is a description of the available routes:
 
 ### 1. **POST /api/login**
-
 - **Description**: Authenticates a user based on their credentials.
 - **Parameters**:
   - `username`: The username provided by the user.
@@ -91,28 +75,28 @@ The Angular frontend communicates with the Node.js backend using a REST API. Bel
   - On failure: Returns `{ message: 'Invalid credentials' }`.
 
 ### 2. **POST /api/users**
-- **Description**: Creates a new user in the system.
+- **Description**: Creates a new user in the MongoDB database.
 - **Request Body**:
   - `username`: Username for the new user.
   - `password`: Password for the new user.
-  - `role`: Role of the new user (`admin`, `groupadmin`, etc.).
-- **Response**: Returns the newly created user object or an error message if the user already exists.
+  - `role`: Role of the new user (`superadmin`, `groupadmin`, etc.).
+- **Response**: Returns the newly created user document or an error if the user already exists.
 
 ### 3. **GET /api/users**
 - **Description**: Retrieves all users.
-- **Response**: Returns an array of all user objects.
+- **Response**: Returns an array of all user documents.
 
 ### 4. **POST /api/groups**
-- **Description**: Creates a new group.
+- **Description**: Creates a new group in MongoDB.
 - **Request Body**:
   - `groupName`: Name of the new group.
-- **Response**: Returns the newly created group or an error message if the group already exists.
+- **Response**: Returns the newly created group or an error if the group already exists.
 
 ### 5. **POST /api/groups/:groupName/users**
-- **Description**: Adds a user to a group.
+- **Description**: Adds a user to a specified group.
 - **Request Body**:
   - `username`: The username to add to the group.
-- **Response**: Returns the updated group.
+- **Response**: Returns the updated group document.
 
 ## Angular Architecture
 
@@ -134,8 +118,8 @@ The Angular frontend communicates with the Node.js backend using a REST API. Bel
 ### Services
 
 1. **AuthService**: Handles login, logout, and session management. It communicates with the backend for authentication and stores user session in `localStorage`.
-
-2. **GroupService**: (optional): Handles the logic for adding/removing users to/from groups and managing channels.
+2. **SocketService**: Establishes and maintains socket connections for real-time messaging.
+3. **APIService**: Facilitates communication with backend APIs for CRUD operations on users, groups, and messages.
 
 ### Guards
 
@@ -151,7 +135,13 @@ The Angular frontend communicates with the Node.js backend using a REST API. Bel
    ```bash
    npm install
    ```
-3. Start the Node.js server:
+3. Set up MongoDB connection in the `.env` file:
+   ```env
+   PORT=5000
+   DB_URL=mongodb://localhost:27017/chatapp
+   JWT_SECRET=your_jwt_secret
+   ```
+4. Start the Node.js server:
    ```bash
    node index.js
    ```
@@ -173,6 +163,4 @@ The Angular frontend communicates with the Node.js backend using a REST API. Bel
 - **Login** as different users (e.g., `super` with password `123`) and navigate based on your role.
 - **Superadmin** will be redirected to the **User Management** page.
 - **Group admin** will be redirected to the **Group Management** page.
-- **Regular users** will be redirected to the **Dashboard**.# chat-app
-# chat-app
-# chat-app
+- **Regular users** will be redirected to the **Dashboard**.
