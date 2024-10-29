@@ -65,7 +65,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     return res.status(400).send('No file uploaded');
   }
 
-  const fileUrl = `/uploads/${req.file.filename}`;
+  const fileUrl = `http://localhost:3000/uploads/${req.file.filename}`;
   res.status(200).json({ fileUrl });
 });
 
@@ -206,7 +206,7 @@ app.post('/api/users', async (req, res) => {
       return res.status(400).send('User already exists');
     }
 
-    user = new User({ username, email, password, role: 'User' });   
+    user = new User({ username, email, password, role: 'User' });
     await user.save();
     console.log('New user added successfully:', username);
     res.status(201).json(user);
@@ -335,20 +335,28 @@ app.post('/api/groups', async (req, res) => {
 });
 
 // Add a user to a group
+// Add a user to a group
 app.post('/api/groups/:groupName/users', async (req, res) => {
   const { groupName } = req.params;
   const { username } = req.body;
+
   console.log(`POST /api/groups/${groupName}/users - Adding user: ${username}`);
 
   try {
     const group = await Group.findOne({ groupName });
-
     if (!group) {
       return res.status(404).send('Group not found');
     }
 
-    if (!group.users.includes(username)) {
-      group.users.push(username);
+    // Find the user by username
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Check if the user ObjectId is already in the group
+    if (!group.users.includes(user._id)) {
+      group.users.push(user._id); // Use ObjectId instead of username
       await group.save();
     }
 
@@ -360,19 +368,35 @@ app.post('/api/groups/:groupName/users', async (req, res) => {
   }
 });
 
+
+// Add a channel to a group
 // Add a channel to a group
 app.post('/api/groups/:groupName/channels', async (req, res) => {
   const { groupName } = req.params;
-  const { channelName } = req.body;
+  const { channelName, users = [] } = req.body; // Default to an empty array if users is not provided
+
   console.log(`POST /api/groups/${groupName}/channels - Adding channel: ${channelName}`);
 
   try {
+    // Find the group by name
     const group = await Group.findOne({ groupName });
-
     if (!group) {
       return res.status(404).send('Group not found');
     }
 
+    // Convert each username to ObjectId if users array is provided and not empty
+    const userObjectIds = await Promise.all(
+      users.map(async (username) => {
+        const user = await User.findOne({ username });
+        if (!user) throw new Error(`User ${username} not found`);
+        return user._id; // Get ObjectId of the user
+      })
+    );
+
+    // Update users in the group with ObjectIds
+    group.users = userObjectIds;
+
+    // Add the channel if it doesn't exist
     if (!group.channels.includes(channelName)) {
       group.channels.push(channelName);
       await group.save();
@@ -381,33 +405,39 @@ app.post('/api/groups/:groupName/channels', async (req, res) => {
     console.log(`Channel ${channelName} added to group ${groupName}`);
     res.json(group);
   } catch (err) {
-    logError(err, 'Add Channel to Group');
+    console.error('[Add Channel to Group Error]', err);
     res.status(500).send('Error adding channel to group');
   }
 });
 
-// Remove a user from a group
-app.delete('/api/groups/:groupName/users/:username', async (req, res) => {
-  const { groupName, username } = req.params;
-  console.log(`DELETE /api/groups/${groupName}/users/${username} - Removing user`);
+
+app.delete('/api/groups/:groupName/users/:userId', async (req, res) => {
+  const { groupName, userId } = req.params;
+
+  console.log(`DELETE /api/groups/${groupName}/users/${userId} - Removing user`);
 
   try {
-    const group = await Group.findOne({ groupName });
+    // Use `$pull` to remove the matching `ObjectId` directly from `users` array
+    const group = await Group.findOneAndUpdate(
+      { groupName },
+      { $pull: { users: new mongoose.Types.ObjectId(userId) } },  // Pull ObjectId directly
+      { new: true }  // Return the updated document
+    );
 
     if (!group) {
       return res.status(404).send('Group not found');
     }
 
-    group.users = group.users.filter(user => user !== username);
-    await group.save();
-
-    console.log(`User ${username} removed from group ${groupName}`);
-    res.json(group);
+    console.log(`User with ID ${userId} removed from group ${groupName}`);
+    res.json(group);  // Return the updated group data
   } catch (err) {
-    logError(err, 'Remove User from Group');
+    console.error('[Remove User from Group Error]', err);
     res.status(500).send('Error removing user from group');
   }
 });
+
+
+
 
 // Remove a channel from a group
 app.delete('/api/groups/:groupName/channels/:channelName', async (req, res) => {

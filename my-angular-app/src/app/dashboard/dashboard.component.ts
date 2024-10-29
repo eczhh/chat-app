@@ -95,7 +95,18 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
         navigator.mediaDevices
           .getUserMedia({ video: true, audio: true })
           .then((stream) => {
-            this.localVideo.nativeElement.srcObject = stream;
+            // **Set currentCall before accessing video elements**
+            this.currentCall = call;
+
+            // **Wait for the view to update before accessing ViewChild elements**
+            setTimeout(() => {
+              if (this.localVideo && this.localVideo.nativeElement) {
+                this.localVideo.nativeElement.srcObject = stream;
+              } else {
+                console.error("localVideo is undefined");
+              }
+            }, 0);
+
             call.answer(stream); // Answer the call with our stream
 
             call.on("stream", (remoteStream) => {
@@ -105,12 +116,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
             call.on("close", () => {
               this.endCall();
             });
-
-            this.currentCall = call;
           })
           .catch((err) => {
             console.error("Failed to get local stream", err);
-            alert("Could not access your camera and microphone.");
+            alert("Could not access your camera and microphone on peer.");
           });
       } else {
         call.close();
@@ -281,8 +290,9 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
   }
 
   isFileMessage(content: string): boolean {
-    return content.startsWith("/uploads/");
+    return content.startsWith("http://localhost:3000/uploads/");
   }
+
 
   isImageFile(content: string): boolean {
     return content.match(/\.(jpeg|jpg|gif|png)$/) != null;
@@ -332,34 +342,29 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       this.currentCall.close();
       this.currentCall = null;
 
-      // Stop local video stream
       const stream = this.localVideo.nativeElement.srcObject as MediaStream;
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
         this.localVideo.nativeElement.srcObject = null;
       }
 
-      // Clear remote video
       this.remoteVideo.nativeElement.srcObject = null;
     }
   }
 
   startVideoCall() {
     if (this.selectedUser) {
-      // Get the peer ID of the selected user from your stored list
-      console.log("peeer ids", this.peerIds);
       const selectedUserPeerId = this.peerIds[this.selectedUser.username];
-      console.log('selected peer',selectedUserPeerId)
-      console.log('selected username',this.selectedUser.username)
       if (selectedUserPeerId) {
         navigator.mediaDevices
           .getUserMedia({ video: true, audio: true })
           .then((stream) => {
-            this.localVideo.nativeElement.srcObject = stream;
+            // Initiate the call
             const call = this.peer.call(selectedUserPeerId, stream, {
               metadata: { username: this.currentUser!.username },
             });
 
+            // Set up event listeners for the call
             call.on("stream", (remoteStream) => {
               this.remoteVideo.nativeElement.srcObject = remoteStream;
             });
@@ -368,14 +373,23 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
               this.endCall();
             });
 
+            // **Set currentCall before accessing video elements**
             this.currentCall = call;
+
+            // **Wait for the view to update before accessing ViewChild elements**
+            setTimeout(() => {
+              if (this.localVideo && this.localVideo.nativeElement) {
+                this.localVideo.nativeElement.srcObject = stream;
+              } else {
+                console.error("localVideo is undefined");
+              }
+            }, 0);
           })
           .catch((err) => {
             console.error("Failed to get local stream", err);
             alert("Could not access your camera and microphone.");
           });
       } else {
-        console.error("Selected user is not available for video call.");
         alert("User is not available for a video call.");
       }
     }

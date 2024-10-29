@@ -9,7 +9,7 @@
 
 html,
 body {
-  height: 100%; /* Ensure the html and body take up full height */
+  height: 100%; /* Full height for both html and body */
 }
 
 body {
@@ -23,6 +23,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh; /* Full viewport height */
+  padding-bottom: 70px; /* Space for the fixed input tray */
 }
 
 /* ================================
@@ -168,7 +169,6 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 0; /* Allow column to shrink */
-  padding-bottom: 70px; /* Space for the fixed input tray */
 }
 
 .chat-panel {
@@ -185,7 +185,6 @@ body {
   padding: 10px 15px;
   background-color: #fafafa;
   min-height: 0; /* Allow shrinking */
-  padding-bottom: 70px; /* Space for the fixed input tray */
 }
 
 .chat-bubble {
@@ -335,4 +334,8 @@ body {
   max-width: 100%;
   height: auto;
   border-radius: 10px;
+}
+
+.hidden {
+  display: none;
 }

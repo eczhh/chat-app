@@ -63,16 +63,18 @@
         </ul>
         <div class="input-group mt-3">
           <input
-            [(ngModel)]="username"
+            [(ngModel)]="userInputs[group.groupName]"
             placeholder="Add User to Group"
-            name="username"
+            name="username_{{ group.groupName }}"
             class="form-control"
             required
           />
           <div class="input-group-append">
             <button
               class="btn btn-success"
-              (click)="addUserToGroup(group.groupName, username)"
+              (click)="
+                addUserToGroup(group.groupName, userInputs[group.groupName])
+              "
             >
               Add User
             </button>
@@ -99,16 +101,21 @@
         </ul>
         <div class="input-group mt-3">
           <input
-            [(ngModel)]="channelName"
+            [(ngModel)]="channelInputs[group.groupName]"
             placeholder="Add Channel to Group"
-            name="channelName"
+            name="channelName_{{ group.groupName }}"
             class="form-control"
             required
           />
           <div class="input-group-append">
             <button
               class="btn btn-success"
-              (click)="addChannelToGroup(group.groupName, channelName)"
+              (click)="
+                addChannelToGroup(
+                  group.groupName,
+                  channelInputs[group.groupName]
+                )
+              "
             >
               Add Channel
             </button>

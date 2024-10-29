@@ -71,9 +71,15 @@
       </div>
 
       <!-- Video Call Modal -->
-      <div *ngIf="currentCall" class="video-call-modal">
+      <div class="video-call-modal" [class.hidden]="!currentCall">
         <div class="video-container">
-          <video #localVideo class="local-video" autoplay playsinline muted></video>
+          <video
+            #localVideo
+            class="local-video"
+            autoplay
+            playsinline
+            muted
+          ></video>
           <video #remoteVideo class="remote-video" autoplay playsinline></video>
         </div>
         <button (click)="endCall()" class="end-call-button">End Call</button>
@@ -111,28 +117,28 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Fixed Chat Input Tray -->
-  <div class="row">
-    <i class="material-icons">sentiment_very_satisfied</i>
-    <input
-      type="text"
-      placeholder="Type your message here..."
-      [(ngModel)]="messageContent"
-      (keydown.enter)="sendMessage()"
-    />
-    <!-- File input for images and videos -->
-    <input
-      type="file"
-      id="fileInput"
-      accept="image/*,video/*"
-      (change)="handleFileInput($event)"
-      style="display: none"
-    />
-    <label for="fileInput" class="material-icons" style="cursor: pointer">
-      attach_file
-    </label>
-    <i class="material-icons">mic</i>
-    <i class="material-icons" (click)="sendMessage()">send</i>
-  </div>
+<!-- Fixed Chat Input Tray -->
+<div class="chat-box-tray">
+  <i class="material-icons">sentiment_very_satisfied</i>
+  <input
+    type="text"
+    placeholder="Type your message here..."
+    [(ngModel)]="messageContent"
+    (keydown.enter)="sendMessage()"
+  />
+  <!-- File input for images and videos -->
+  <input
+    type="file"
+    id="fileInput"
+    accept="image/*,video/*"
+    (change)="handleFileInput($event)"
+    style="display: none"
+  />
+  <label for="fileInput" class="material-icons" style="cursor: pointer">
+    attach_file
+  </label>
+  <i class="material-icons">mic</i>
+  <i class="material-icons" (click)="sendMessage()">send</i>
 </div>

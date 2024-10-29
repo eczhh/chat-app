@@ -13,9 +13,11 @@ import { LogoutComponent } from "../logout/logout.component";
 })
 export class GroupManagementComponent {
   groupName: string = '';
-  username: string = '';
-  channelName: string = '';
   groups: any[] = [];
+
+  // Objects to store inputs for each group
+  userInputs: { [key: string]: string } = {};
+  channelInputs: { [key: string]: string } = {};
 
   private apiUrl = 'http://localhost:3000/api/groups';
 
@@ -29,22 +31,27 @@ export class GroupManagementComponent {
   }
 
   addUserToGroup(groupName: string, username: string): void {
+    if (!username) return; // Ensure there's a username input
     this.http.post(`${this.apiUrl}/${groupName}/users`, { username }).subscribe(() => {
       this.loadGroups();
+      this.userInputs[groupName] = ''; // Clear the input field for this group
     });
   }
 
   addChannelToGroup(groupName: string, channelName: string): void {
+    if (!channelName) return; // Ensure there's a channelName input
     this.http.post(`${this.apiUrl}/${groupName}/channels`, { channelName }).subscribe(() => {
+      this.loadGroups();
+      this.channelInputs[groupName] = ''; // Clear the input field for this group
+    });
+  }
+
+  removeUserFromGroup(groupName: string, userId: string): void {
+    this.http.delete(`${this.apiUrl}/${groupName}/users/${userId}`).subscribe(() => {
       this.loadGroups();
     });
   }
 
-  removeUserFromGroup(groupName: string, username: string): void {
-    this.http.delete(`${this.apiUrl}/${groupName}/users/${username}`).subscribe(() => {
-      this.loadGroups();
-    });
-  }
 
   removeChannelFromGroup(groupName: string, channelName: string): void {
     this.http.delete(`${this.apiUrl}/${groupName}/channels/${channelName}`).subscribe(() => {
